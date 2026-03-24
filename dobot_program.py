@@ -8,7 +8,6 @@ IP2 = "192.168.2.4"
 IP3 = "192.168.2.3"
 IP4 = "192.168.2.2"
 IP5 = "192.168.2.1"
-IP6 = "192.168.2.10"
 
 
 GlobalSpeed = 75  # Velocidad global del robot (0-100)
