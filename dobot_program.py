@@ -1,6 +1,7 @@
 import threading
 from time import sleep
 from dobot_utils import *
+from DobotDemo import DobotDemo
 
 #aqui se declaran todas las IPs de los robots a usar
 IP1 = "192.168.2.5"
@@ -100,6 +101,59 @@ def routine1():
         break
 
 def routine3():
+    # 1. Conectar al robot
+    dobot = DobotDemo("192.168.2.3")
+    dobot.start()
+    sleep(2)
+
+    # 2. Definir los puntos (X, Y, Z, RX, RY, RZ)
+    p1 = [-176.96, -208.99, 89.4272, 179.1183, -0.6229, 128.5592]
+    p2 = [72.1463, -340.1630, 275.4693, -179.1450, 0.9245, -175.1831]
+    p3 = [78.8526, -67.9921, 613.4407, -91.3329, -6.7666, 178.0634]
+    p4 = [-176.96, -208.99, 297.6850, 179.1183, -0.6229, 128.5592]
+    p5 = [73.5594, -334.0, 272.4303, -179.1450, 0.9245, -175.1831]
+    p6 = [73.5594, -334.0, 250.4917, -179.1450, 0.9245, -175.1831]
+
+    try:
+        dobot.RunPoint(p3)
+        sleep(.5)
+
+        dobot.RunPoint(p4)
+        sleep(.5)
+
+        dobot.RunPoint(p1)
+        sleep(.5)
+        
+       
+        print("Encendiendo herramienta...")
+        dobot.dashboard.ToolDOInstant(1, 1)
+        sleep(1) # Espera opcional para asegurar la acción física
+
+        dobot.RunPoint(p4)
+        sleep(.5)
+
+        dobot.RunPoint(p5)
+        sleep(.5)
+
+        dobot.RunPoint(p6)
+        sleep(.5)
+
+        print("Encendiendo herramienta...")
+        dobot.dashboard.ToolDOInstant(1, 0)
+        sleep(1) # Espera opcional para asegurar la acción física
+
+        dobot.RunPoint(p5)
+        sleep(.5)
+
+        dobot.RunPoint(p3)
+        sleep(.5)
+
+        dobot.__del__()
+
+    except Exception as e:
+        print(f"Ocurrió un error durante la ejecución: {e}")
+
+def routine4():
     dashboard, move, feed=DobotInit(IP4)
     localSpeed=GlobalSpeed
 
@@ -164,6 +218,63 @@ def routine3():
     WaitArrive(Pi)
     sleep(.5)
 
+def routine5():
+    # 1. Conectar al robot
+    dobot = DobotDemo("192.168.2.1")
+    dobot.start()
+    sleep(2)
+
+    # 2. Definir los puntos (X, Y, Z, RX, RY, RZ)
+    p1 = [108.1967, -392.5636, 96.9418, 179.4769, 0.3314, -156.4647]
+    p2 = [108.1967, -392.5636, 84.2425, 179.4769, 0.3314, -156.4647]
+    p3 = [202.5460, 265.4626, 273.1837, -175.2105, 2.0367, -47.3313]
+    p4 = [51.1504, 74.4889, 620.3330, -85.3803, -3.7876, -95.43]
+    p5 = [205.4049, 272.1, 277.2, -177.7729, -2.1436, -47.4710]
+    p6 = [108.7921, -394.2682, 96.9418, 179.4768, 0.3314, -156.4647]
+    p7 = [108.7921, -394.2682, 84.8957, 179.4768, 0.3314, -156.4647]
+    p8 = [205.4049, 272.1, 257.2868, -177.7729, -2.1436, -47.4710]
+
+    try:
+        dobot.RunPoint(p4)
+        sleep(.5)
+
+        dobot.RunPoint(p6)
+        sleep(.5)
+
+        dobot.RunPoint(p7)
+        sleep(.5)
+
+        print("Encendiendo herramienta...")
+        dobot.dashboard.ToolDOInstant(1, 1)
+        sleep(1)
+
+        dobot.RunPoint(p6)
+        sleep(.5)
+
+        dobot.RunPoint(p4)
+        sleep(.5)
+
+        dobot.RunPoint(p5)
+        sleep(.5)
+
+        dobot.RunPoint(p8)
+        sleep(.5)
+
+        print("Encendiendo herramienta...")
+        dobot.dashboard.ToolDOInstant(1, 0)
+        sleep(1)
+
+        dobot.RunPoint(p5)
+        sleep(.5)
+
+        dobot.RunPoint(p4)
+        sleep(.5)
+
+        del dobot
+
+
+    except Exception as e:
+        print(f"Ocurrió un error durante la ejecución: {e}")
 
 
 def routine2():
@@ -232,7 +343,9 @@ def routine2():
 
             routine3()
 
-            sleep(20)
+            routine4()
+
+            routine5()
 
             dashboard.DO(3,0)
             sleep(0.5)
