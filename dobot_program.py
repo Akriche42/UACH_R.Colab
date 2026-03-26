@@ -25,330 +25,311 @@ def DobotInit(ip: str, speed: int = GlobalSpeed):
     dashboard.SpeedFactor(speed)
     return dashboard, move, feed
 
-def routine1():
-    dashboard, move, feed = DobotInit(IP1) #aqui se conecta al robot de la IP 192.168.2.5 (el dobot MG400 de la cinta transportadora)
-    localSpeed = GlobalSpeed #se delcara la velocidad a la que se va a mover el robot
-    #se declaran los puntos que se van a usar (si se puede usa el propio sistema de puntos de la aplicacion dobot para sacar los puntos rapido)
-    Pi=[350,0,0,0]
-    P1=[250,-242.7,-16.8,23.3]
-    P2=[250.2,-242.7,138.6,23.3]
-    P3=[256.28,0,138.61,25.543]
-    P4=[249.99,0,-156.3,0]
-    P5=[66.746,341.98,-151.5,90.732]
-    P6=[66,341.98,138.61,25.543]
-    P2=[250.2,-242.7,138.6,23.3]
-
-
-    while True:
-
-        limpiarEntradas(dashboard, 10) #limpia todas las salidas
-
-        MovJoint(move, Pi) #se mueve con Joint al punto inicial (pi)
-        WaitArrive(Pi) #espera a que llegue al punto inicial
-        sleep(1) #espera un segundo despues de llegar
-
-        while int(dashboard.DI(9)[3])==0: #espera hasta que el sensor del piston se encianda (esto con el propocito de que no haga nada hasta que tenga algo para poder sacar)
-                                          #(numero de sensor)[indice del arreglo del que regresa el valor]
-            dashboard.DO(9,0)#mantiene el output 9 apagado (piston)
-            dashboard.DO(10,0)#mantiene el output 10 apagado (cinta)
-        while int(dashboard.DI(10)[3])==0: #se repite mientras que este el sensor de la cinta apagado (con eso sabes maomeno a donde llega la ficha (la diferencia entre un punto y otro es milimetrico))
-            dashboard.DO(9,1) #mantiene el output 9 encendido (piston)
-            dashboard.DO(10,1) #mantiene el output 10 encendido (cinta)
-        dashboard.DO(9,0) #apaga el output 9 (piston) apenas llega la ficha al sensor de la cinta
-        dashboard.DO(10,0) #apaga el output 10 (cinta) apenas llega la ficha al sensor de la cinta
-        sleep(1) #espera un segundo despues de llegar
-
-        MovJoint(move, P2)
-        WaitArrive(P2)
-        sleep(1)
-
-        MovJoint(move, P1)
-        WaitArrive(P1)
-        sleep(1)
-
-        dashboard.DO(1,1) #enciende el output 1 (succion)
-        sleep(1)
-
-        MovJoint(move, P2)
-        WaitArrive(P2)
-        sleep(1)
-
-        MovJoint(move, P6)
-        WaitArrive(P6)
-        sleep(1)
-
-        MovJoint(move, P5)
-        WaitArrive(P5)
-        sleep(1)
-
-        dashboard.DO(1,0)
-        sleep(1)
-
-        dashboard.DO(2,1)
-        sleep(1)
-
-        dashboard.DO(2,0)
-        sleep(1)
-
-        MovJoint(move, P6)
-        WaitArrive(P6)
-        sleep(1)
-
-        MovJoint(move, Pi)
-        WaitArrive(Pi)
-        sleep(1)
-
-        break
-
-def routine3():
-    # 1. Conectar al robot
-    dobot = DobotDemo("192.168.2.3")
-    dobot.start()
+def routine():
+    dashboard1, move1, feed = DobotInit(IP1)
+    localSpeed = GlobalSpeed
+    dashboard2, move2, feed = DobotInit(IP2)
+    localSpeed = GlobalSpeed
+    dobot3 = DobotDemo(IP3)
+    dobot3.start()
     sleep(2)
-
-    # 2. Definir los puntos (X, Y, Z, RX, RY, RZ)
-    p1 = [-176.96, -208.99, 89.4272, 179.1183, -0.6229, 128.5592]
-    p2 = [72.1463, -340.1630, 275.4693, -179.1450, 0.9245, -175.1831]
-    p3 = [78.8526, -67.9921, 613.4407, -91.3329, -6.7666, 178.0634]
-    p4 = [-176.96, -208.99, 297.6850, 179.1183, -0.6229, 128.5592]
-    p5 = [73.5594, -334.0, 272.4303, -179.1450, 0.9245, -175.1831]
-    p6 = [73.5594, -334.0, 250.4917, -179.1450, 0.9245, -175.1831]
-
-    try:
-        dobot.RunPoint(p3)
-        sleep(.5)
-
-        dobot.RunPoint(p4)
-        sleep(.5)
-
-        dobot.RunPoint(p1)
-        sleep(.5)
-        
-       
-        print("Encendiendo herramienta...")
-        dobot.dashboard.ToolDOInstant(1, 1)
-        sleep(1) # Espera opcional para asegurar la acción física
-
-        dobot.RunPoint(p4)
-        sleep(.5)
-
-        dobot.RunPoint(p5)
-        sleep(.5)
-
-        dobot.RunPoint(p6)
-        sleep(.5)
-
-        print("Encendiendo herramienta...")
-        dobot.dashboard.ToolDOInstant(1, 0)
-        sleep(1) # Espera opcional para asegurar la acción física
-
-        dobot.RunPoint(p5)
-        sleep(.5)
-
-        dobot.RunPoint(p3)
-        sleep(.5)
-
-        dobot.__del__()
-
-    except Exception as e:
-        print(f"Ocurrió un error durante la ejecución: {e}")
-
-def routine4():
-    dashboard, move, feed=DobotInit(IP4)
-    localSpeed=GlobalSpeed
-
-    Pi=[400,0,200,0]
-    P1=[399.21,8.5712,154.56,93.823]
-    P2=[244.86,-140.3,200,-74.94]
-    P3=[244.86,-140.3,188.79,-74.94]
-    P4=[9.2932,398.23,43.5,95.973]
-    P5=[9.2932,398.23,102.55,95.973]
-
-    MovJoint(move, Pi)
-    WaitArrive(Pi)
-    sleep(.5)
-
-    while int(dashboard.DI(9)[3])==0: #(numero de sensor)[indice del arroglo del que regresa el valor]
-        dashboard.DO(9,0)
-        dashboard.DO(10,0)
-    while int(dashboard.DI(10)[3])==0:
-        dashboard.DO(9,1)
-        dashboard.DO(10,1)
-    dashboard.DO(9,0)
-    dashboard.DO(10,0)
-    sleep(1)
-
-    MovJoint(move, P2)
-    WaitArrive(P2)
-    sleep(.5)
-
-    MovJoint(move, P3)
-    WaitArrive(P3)
-    sleep(.5)
-
-    dashboard.DO(8,1)
+    dashboard4, move4, feed = DobotInit(IP4)
+    localSpeed = GlobalSpeed
+    dobot5 = DobotDemo(IP5)
+    dobot5.start()
     sleep(2)
+    
 
-    MovJoint(move, P2)
-    WaitArrive(P2)
-    sleep(.5)
+    Pi1=[350,0,0,0]
+    P11=[250,-242.7,-16.8,23.3]
+    P21=[250.2,-242.7,138.6,23.3]
+    P31=[256.28,0,138.61,25.543]
+    P41=[249.99,0,-156.3,0]
+    P51=[66.746,341.98,-151.5,90.732]
+    P61=[66,341.98,138.61,25.543]
+    P21=[250.2,-242.7,138.6,23.3]
 
-    MovJoint(move, Pi)
-    WaitArrive(Pi)
-    sleep(.5)
+    P12 = [-200,200,0,90.381]
+    P22 = [234,-76.4,0,-3.773]
+    P32 = [240,-76.4,-152.8,-3.773]
+    P52 = [138.26,284.03,-162.8,77.106]
+    P62 = [138.26,284.03,-38.06,77.106]
 
-    MovJoint(move, P4)
-    WaitArrive(P4)
-    sleep(1.5)
+    p13 = [-176.96, -208.99, 89.4272, 179.1183, -0.6229, 128.5592]
+    p23 = [72.1463, -340.1630, 275.4693, -179.1450, 0.9245, -175.1831]
+    p33 = [78.8526, -67.9921, 613.4407, -91.3329, -6.7666, 178.0634]
+    p43 = [-176.96, -208.99, 297.6850, 179.1183, -0.6229, 128.5592]
+    p53 = [73.5594, -334.0, 272.4303, -179.1450, 0.9245, -175.1831]
+    p63 = [73.5594, -334.0, 250.4917, -179.1450, 0.9245, -175.1831]
 
-    dashboard.DO(8,0)
-    sleep(.5)
+    Pi4=[400,0,200,0]
+    P14=[399.21,8.5712,154.56,93.823]
+    P24=[244.86,-140.3,200,-74.94]
+    P34=[244.86,-140.3,188.79,-74.94]
+    P44=[9.2932,398.23,43.5,95.973]
+    P54=[9.2932,398.23,102.55,95.973]
 
-    dashboard.DO(7,1)
-    sleep(1)
+    p15 = [108.1967, -392.5636, 96.9418, 179.4769, 0.3314, -156.4647]
+    p25 = [108.1967, -392.5636, 84.2425, 179.4769, 0.3314, -156.4647]
+    p35 = [202.5460, 265.4626, 273.1837, -175.2105, 2.0367, -47.3313]
+    p45 = [51.1504, 74.4889, 620.3330, -85.3803, -3.7876, -95.43]
+    p55 = [205.4049, 272.1, 277.2, -177.7729, -2.1436, -47.4710]
+    p65 = [108.7921, -394.2682, 96.9418, 179.4768, 0.3314, -156.4647]
+    p75 = [108.7921, -394.2682, 84.8957, 179.4768, 0.3314, -156.4647]
+    p85 = [205.4049, 272.1, 257.2868, -177.7729, -2.1436, -47.4710]
 
-    dashboard.DO(7,0)
+
+    limpiarEntradas(dashboard1, 10)
+    limpiarEntradas(dashboard2, 10)
+    limpiarEntradas(dashboard4, 10)
+
+    MovJoint(move1, Pi1) #se mueve con Joint al punto inicial (pi)
+    WaitArrive(Pi1) #espera a que llegue al punto inicial
+    sleep(1) #espera un segundo despues de llegar
+
+    MovJoint(move2, P12)
+    WaitArrive(P12)
     sleep(0.5)
 
-    MovJoint(move, P5)
-    WaitArrive(P5)
-    sleep(.5)
-
-    MovJoint(move, Pi)
-    WaitArrive(Pi)
-    sleep(.5)
-
-def routine5():
-    # 1. Conectar al robot
-    dobot = DobotDemo("192.168.2.1")
-    dobot.start()
-    sleep(2)
-
-    # 2. Definir los puntos (X, Y, Z, RX, RY, RZ)
-    p1 = [108.1967, -392.5636, 96.9418, 179.4769, 0.3314, -156.4647]
-    p2 = [108.1967, -392.5636, 84.2425, 179.4769, 0.3314, -156.4647]
-    p3 = [202.5460, 265.4626, 273.1837, -175.2105, 2.0367, -47.3313]
-    p4 = [51.1504, 74.4889, 620.3330, -85.3803, -3.7876, -95.43]
-    p5 = [205.4049, 272.1, 277.2, -177.7729, -2.1436, -47.4710]
-    p6 = [108.7921, -394.2682, 96.9418, 179.4768, 0.3314, -156.4647]
-    p7 = [108.7921, -394.2682, 84.8957, 179.4768, 0.3314, -156.4647]
-    p8 = [205.4049, 272.1, 257.2868, -177.7729, -2.1436, -47.4710]
-
     try:
-        dobot.RunPoint(p4)
+        dobot3.RunPoint(p33)
         sleep(.5)
-
-        dobot.RunPoint(p6)
-        sleep(.5)
-
-        dobot.RunPoint(p7)
-        sleep(.5)
-
-        print("Encendiendo herramienta...")
-        dobot.dashboard.ToolDOInstant(1, 1)
-        sleep(1)
-
-        dobot.RunPoint(p6)
-        sleep(.5)
-
-        dobot.RunPoint(p4)
-        sleep(.5)
-
-        dobot.RunPoint(p5)
-        sleep(.5)
-
-        dobot.RunPoint(p8)
-        sleep(.5)
-
-        print("Encendiendo herramienta...")
-        dobot.dashboard.ToolDOInstant(1, 0)
-        sleep(1)
-
-        dobot.RunPoint(p5)
-        sleep(.5)
-
-        dobot.RunPoint(p4)
-        sleep(.5)
-
-        del dobot
-
-
     except Exception as e:
         print(f"Ocurrió un error durante la ejecución: {e}")
 
+    try:
+        dobot5.RunPoint(p45)
+        sleep(.5)
+    except Exception as e:
+        print(f"Ocurrió un error durante la ejecución: {e}")
 
-def routine2():
-    dashboard, move, feed = DobotInit(IP2)
-    localSpeed = GlobalSpeed
-    #Aquí escribe la rtutina
-    P1 = [-200,200,0,90.381]
-    P2 = [234,-76.4,0,-3.773]
-    P3 = [240,-76.4,-152.8,-3.773]
-    P5 = [138.26,284.03,-162.8,77.106]
-    P6 = [138.26,284.03,-38.06,77.106]
+    MovJoint(move4, Pi4)
+    sleep(.5)
 
     while True:
-        #print(f"{itsOn}")
-        #dashboard.DO(3,itsOn)
-        #sleep(0.5)
+        dashboard2.DO(3,1)
+        sleep(0.5)
 
-        limpiarEntradas(dashboard, 10)
+        if int(dashboard2.DI(1)[3])==1:
 
-        if int(dashboard.DI(1)[3])==1:
-
-            dashboard.DO(3,1)
+            dashboard2.DO(3,0)
             sleep(0.5)
 
-            routine1()
-
-            MovJoint(move, P1)
-            WaitArrive(P1)
+            dashboard2.DO(4,1)
             sleep(0.5)
 
-            MovJoint(move, P2)
-            WaitArrive(P2)
-            sleep(0.5)
+            while int(dashboard1.DI(9)[3])==0: #espera hasta que el sensor del piston se encianda (esto con el propocito de que no haga nada hasta que tenga algo para poder sacar)
+                                                #(numero de sensor)[indice del arreglo del que regresa el valor]
+                dashboard1.DO(9,0)#mantiene el output 9 apagado (piston)
+                dashboard1.DO(10,0)#mantiene el output 10 apagado (cinta)
+            while int(dashboard1.DI(10)[3])==0: #se repite mientras que este el sensor de la cinta apagado (con eso sabes maomeno a donde llega la ficha (la diferencia entre un punto y otro es milimetrico))
+                dashboard1.DO(9,1) #mantiene el output 9 encendido (piston)
+                dashboard1.DO(10,1) #mantiene el output 10 encendido (cinta)
+            dashboard1.DO(9,0) #apaga el output 9 (piston) apenas llega la ficha al sensor de la cinta
+            dashboard1.DO(10,0) #apaga el output 10 (cinta) apenas llega la ficha al sensor de la cinta
+            sleep(1) #espera un segundo despues de llegar
 
-            MovJoint(move, P3)
-            WaitArrive(P3)
-            sleep(0.5)
-
-            dashboard.DO(9,1)
-            sleep(0.5)
-
-            MovJoint(move, P2)
-            WaitArrive(P2)
-            sleep(0.5)
-
-            MovJoint(move, P5)
-            WaitArrive(P5)
-            sleep(0.5)
-
-            dashboard.DO(9,0)
+            MovJoint(move1, P21)
+            WaitArrive(P21)
             sleep(1)
 
-            dashboard.DO(10,1)
+            MovJoint(move1, P11)
+            WaitArrive(P11)
+            sleep(1)
+
+            dashboard1.DO(1,1) #enciende el output 1 (succion)
+            sleep(1)
+
+            MovJoint(move1, P21)
+            WaitArrive(P21)
+            sleep(1)
+
+            MovJoint(move1, P61)
+            WaitArrive(P61)
+            sleep(1)
+
+            MovJoint(move1, P51)
+            WaitArrive(P51)
+            sleep(1)
+
+            dashboard1.DO(1,0)
+            sleep(1)
+
+            dashboard1.DO(2,1)
+            sleep(1)
+
+            dashboard1.DO(2,0)
+            sleep(1)
+
+            MovJoint(move1, P61)
+            WaitArrive(P61)
+            sleep(1)
+
+            MovJoint(move1, Pi1)
+            WaitArrive(Pi1)
+            sleep(1)
+
+            MovJoint(move2, P22)
+            WaitArrive(P22)
+            sleep(0.5)
+
+            MovJoint(move2, P32)
+            WaitArrive(P32)
+            sleep(0.5)
+
+            dashboard2.DO(9,1)
+            sleep(0.5)
+
+            MovJoint(move2, P22)
+            WaitArrive(P22)
+            sleep(0.5)
+
+            MovJoint(move2, P52)
+            WaitArrive(P52)
+            sleep(0.5)
+
+            dashboard2.DO(9,0)
+            sleep(1)
+
+            dashboard2.DO(10,1)
             sleep(2)
 
-            dashboard.DO(10,0)
+            dashboard2.DO(10,0)
             sleep(0.5)
 
-            MovJoint(move, P6)
-            WaitArrive(P6)
+            MovJoint(move2, P62)
+            WaitArrive(P62)
             sleep(0.5)
 
-            MovJoint(move, P1)
-            WaitArrive(P1)
+            MovJoint(move2, P12)
+            WaitArrive(P12)
             sleep(0.5)
 
-            routine3()
+            try:
+                dobot3.RunPoint(p33)
+                sleep(.5)
 
-            routine4()
+                dobot3.RunPoint(p43)
+                sleep(.5)
 
-            routine5()
+                dobot3.RunPoint(p13)
+                sleep(.5)
+                
+            
+                print("Encendiendo herramienta...")
+                dobot3.dashboard.ToolDOInstant(1, 1)
+                sleep(1) # Espera opcional para asegurar la acción física
 
-            dashboard.DO(3,0)
+                dobot3.RunPoint(p43)
+                sleep(.5)
+
+                dobot3.RunPoint(p53)
+                sleep(.5)
+
+                dobot3.RunPoint(p63)
+                sleep(.5)
+
+                print("Encendiendo herramienta...")
+                dobot3.dashboard.ToolDOInstant(1, 0)
+                sleep(1) # Espera opcional para asegurar la acción física
+
+                dobot3.RunPoint(p53)
+                sleep(.5)
+
+                dobot3.RunPoint(p33)
+                sleep(.5)
+
+            except Exception as e:
+                print(f"Ocurrió un error durante la ejecución: {e}")
+
+            while int(dashboard4.DI(9)[3])==0: #(numero de sensor)[indice del arroglo del que regresa el valor]
+                dashboard4.DO(9,0)
+                dashboard4.DO(10,0)
+            while int(dashboard4.DI(10)[3])==0:
+                dashboard4.DO(9,1)
+                dashboard4.DO(10,1)
+            dashboard4.DO(9,0)
+            dashboard4.DO(10,0)
+            sleep(1)
+
+            MovJoint(move4, P24)
+            WaitArrive(P24)
+            sleep(.5)
+
+            MovJoint(move4, P34)
+            WaitArrive(P34)
+            sleep(.5)
+
+            dashboard4.DO(8,1)
+            sleep(2)
+
+            MovJoint(move4, P24)
+            WaitArrive(P24)
+            sleep(.5)
+
+            MovJoint(move4, Pi4)
+            WaitArrive(Pi4)
+            sleep(.5)
+
+            MovJoint(move4, P44)
+            WaitArrive(P44)
+            sleep(1.5)
+
+            dashboard4.DO(8,0)
+            sleep(.5)
+
+            dashboard4.DO(7,1)
+            sleep(1)
+
+            dashboard4.DO(7,0)
+            sleep(0.5)
+
+            MovJoint(move4, P54)
+            WaitArrive(P54)
+            sleep(.5)
+
+            MovJoint(move4, Pi4)
+            WaitArrive(Pi4)
+            sleep(.5)
+
+            try:
+                dobot5.RunPoint(p65)
+                sleep(.5)
+
+                dobot5.RunPoint(p75)
+                sleep(.5)
+
+                print("Encendiendo herramienta...")
+                dobot5.dashboard.ToolDOInstant(1, 1)
+                sleep(1)
+
+                dobot5.RunPoint(p65)
+                sleep(.5)
+
+                dobot5.RunPoint(p45)
+                sleep(.5)
+
+                dobot5.RunPoint(p55)
+                sleep(.5)
+
+                dobot5.RunPoint(p85)
+                sleep(.5)
+
+                print("Encendiendo herramienta...")
+                dobot5.dashboard.ToolDOInstant(1, 0)
+                sleep(1)
+
+                dobot5.RunPoint(p55)
+                sleep(.5)
+
+                dobot5.RunPoint(p45)
+                sleep(.5)
+
+            except Exception as e:
+                print(f"Ocurrió un error durante la ejecución: {e}")
+
+            dashboard2.DO(4,0)
             sleep(0.5)
         
 if __name__ == "__main__":
-    routine2()
+    routine()
